@@ -37,7 +37,14 @@ jobs:
         run: dotnet restore
       
       - name: Build
-        run: dotnet build --configuration release
+        run: dotnet build --configuration release --results-directory "build-${{ github.run_number }}"
+        
+      - name: Generate Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ github.run_number }}
+          path: build-${{ github.run_number }}
+        if: ${{ always() }}
 
       - name: Load SSH Key
         run: |
@@ -47,4 +54,4 @@ jobs:
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
 
       - name: Deploy
-        run: ssh -i $SSH_KEY_PATH opc@129.151.203.205 "sh ~/deploy.sh"
+        run: ssh -i $SSH_KEY_PATH opc@129.151.203.205 "sh /home/opc/deploy.sh"
