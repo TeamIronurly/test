@@ -28,9 +28,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
+      - name: Setup DOTNET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+          
+      - name: Install Dependencies
+        run: dotnet restore
+      
       - name: Build
-        run: echo "We will build it here"
-        shell: bash
+        run: dotnet build --configuration release
 
       - name: Load SSH Key
         run: |
@@ -38,8 +45,6 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ../private.key
           sudo chmod 600 ../private.key
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-        shell: bash
 
-      - name: SSH Test
-        run: ssh -i $SSH_KEY_PATH opc@129.151.203.205 "echo Hello World"
-        shell: bash
+      - name: Deploy
+        run: ssh -i $SSH_KEY_PATH opc@129.151.203.205 "sh ~/deploy.sh"
