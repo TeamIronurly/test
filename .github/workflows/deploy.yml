@@ -37,7 +37,7 @@ jobs:
         run: dotnet restore
       
       - name: Build
-        run: dotnet build --configuration release --results-directory "build-${{ github.run_number }}"
+        run: dotnet build -c release -o "build-${{ github.run_number }}"
         
       - name: Generate Artifacts
         uses: actions/upload-artifact@v3
